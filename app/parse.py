@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
 
+
 @dataclass
 class Quote:
     text: str
@@ -18,12 +19,13 @@ QUOTE_FIELDS = [f.name for f in dataclasses.fields(Quote)]
 def parse_quotes() -> list[Quote]:
     quotes = []
     for page in range(1, 11):
-        soup = BeautifulSoup(requests.get(f"{BASE_URL}page/{page}/").content, "html.parser")
-        for q in soup.select("div.quote"):
+        soup = BeautifulSoup(
+            requests.get(f"{BASE_URL}page/{page}/").content, "html.parser")
+        for quote in soup.select("div.quote"):
             quotes.append(Quote(
-                text=q.select_one("span.text").text,
-                author=q.select_one("small.author").text,
-                tags=[tag.text for tag in q.select("div.tags a")]
+                text=quote.select_one("span.text").text,
+                author=quote.select_one("small.author").text,
+                tags=[tag.text for tag in quote.select("div.tags a")]
             ))
     return quotes
 
